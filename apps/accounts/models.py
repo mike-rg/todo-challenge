@@ -6,7 +6,8 @@ from apps.base.models import BaseModel
 
 class User(AbstractUser, BaseModel):
     email = models.EmailField(unique=True, null=False, blank=False)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
+    email_verified = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

@@ -49,6 +49,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "apps.base",
+    "apps.accounts",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -137,9 +138,16 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# Custom user model
+AUTH_USER_MODEL = "accounts.User"
+
+
+# Rest Framework
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
 
 # OpenAPI 3.0 schema
 SPECTACULAR_SETTINGS = {

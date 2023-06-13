@@ -6,7 +6,7 @@ from apps.base.models import BaseModel
 
 class User(AbstractUser, BaseModel):
     email = models.EmailField(unique=True, null=False, blank=False)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -14,7 +14,6 @@ class User(AbstractUser, BaseModel):
     class Meta:
         verbose_name = 'User'
         verbose_name_plural = 'Users'
-        db_table = 'auth_user'
 
     def __str__(self):
         return self.email

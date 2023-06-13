@@ -1,0 +1,16 @@
+FROM python:3.8-slim-buster
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+RUN apt-get update -y \
+    && apt-get -y install libpq-dev python3-dev build-essential libcurl4-openssl-dev libssl-dev libsasl2-dev supervisor procps pkg-config
+
+WORKDIR /app
+
+ARG REQUIREMENTS_FILE=base.txt
+
+COPY ./requirements/ /app/requirements/
+RUN pip install --trusted-host pypi.python.org -r /app/requirements/$REQUIREMENTS_FILE
+
+EXPOSE 80

@@ -1,0 +1,9 @@
+[flake8]
+ignore = D401, D403, D101, E501, D106, D102, D103, D101, D105, D401, D100, C901, F401, W504, DJ01, A003, PIE783, PIE784, PIE785, S101, S311, DUO102, PIE803
+exclude = .git,__pycache__,docs/source/conf.py,old,build,dist,venv/*,*/migrations/*,*/static/CACHE/*,*/staticfiles/*,*/templ,*/settings/*
+max-complexity = 10
+max-line-length = 160
+per-file-ignores =
+    ./settings/local.py:F405,F403
+    ./settings/prod.py:F405,F403,F401
+    ./settings/base.py:F405,F403

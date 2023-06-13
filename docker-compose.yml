@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  task-manager:
+    container_name: task-manager-local
+    build:
+      context: .
+      dockerfile: ./compose/local/dockerfiles/Dockerfile-task-manager
+      args:
+        REQUIREMENTS_FILE: local.txt
+    env_file: .env
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    working_dir: /app
+    environment:
+      - DJANGO_ENV=local
+      - DEBUG=True
+    stdin_open: true
+    tty: true
+    restart: always

@@ -1,0 +1,2 @@
+class EmailVerificationTokenException(Exception):
+    pass

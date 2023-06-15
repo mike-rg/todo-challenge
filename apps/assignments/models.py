@@ -4,7 +4,7 @@ from apps.base.models import BaseModel
 from .constants import AssignmentStatus
 
 
-class Assignment(BaseModel):
+class Assignments(BaseModel):
     user = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
     status = models.CharField(
         max_length=30, choices=AssignmentStatus.STATUS_CHOICES, default=AssignmentStatus.PENDING)

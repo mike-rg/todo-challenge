@@ -17,14 +17,13 @@ class UserFactory(BaseUserFactory):
     is_superuser = False
     is_active = False
     email_verified = False
-    
 
 
 class UserStaffFactory(BaseUserFactory):
     is_staff = True
     is_superuser = False
 
-    
+
 class SuperUserFactory(BaseUserFactory):
     is_staff = True
     is_superuser = True

@@ -25,7 +25,7 @@ class RegisterUserTestCase(APITestCase):
     @unittest.skip('Not implemented yet')
     def test_register_user_invalid_email(self):
         pass
-    
+
     def test_register_user_already_exists_email(self):
         data = {
             'email': 'foo@example.com',
@@ -112,7 +112,7 @@ class EmailVerificationTestCase(APITestCase):
         self.assertTrue(self.user_1.email_verified)
         self.assertTrue(self.user_1.is_active)
         self.assertFalse(self.user_1.email_verify_tokens.exists())
-        
+
         url = reverse('accounts:verify-email', kwargs={'token': f'{token}'})
         response = self.client.get(url)
         response_data = response.json()

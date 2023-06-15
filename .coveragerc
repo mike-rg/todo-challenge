@@ -1,3 +1,7 @@
 [report]
 omit =
     */migrations/*
+    tests.py
+    *test_*.py
+    *_tests.py
+    *_test.py

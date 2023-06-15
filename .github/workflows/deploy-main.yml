@@ -28,10 +28,11 @@ jobs:
     - name: Run Tests
       env:
         DJANGO_SETTINGS_MODULE: ${{ secrets.DJANGO_SETTINGS_MODULE }}
-        JWT_SIGNING_KEY: ${{ secrets.JWT_SIGNING_KEY }}
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        DJANGO_ENV: ${{ secrets.DJANGO_ENV }}
         DEBUG: ${{ secrets.DEBUG }}
         EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
+        JWT_SIGNING_KEY: ${{ secrets.JWT_SIGNING_KEY }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |
         pytest --cov=apps --cov-report html
         coverage report

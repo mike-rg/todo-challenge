@@ -12,5 +12,9 @@ class Assignments(BaseModel):
     description = models.TextField()
     due_date = models.DateTimeField()
 
+    class Meta:
+        verbose_name = 'Assignment'
+        verbose_name_plural = 'Assignments'
+
     def __str__(self):
         return f"{self.user} - {self.title}"

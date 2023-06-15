@@ -1,12 +1,12 @@
 from django_filters import rest_framework as filters
 
-from .models import Assignment
+from .models import Assignments
 
 
-class AssinmentsFilters(filters.FilterSet):
+class AssignmentsFilters(filters.FilterSet):
 
     class Meta:
-        model = Assignment
+        model = Assignments
         fields = {
             'user_id': ['exact'],
             'created_at': ['exact', 'lte', 'gte'],

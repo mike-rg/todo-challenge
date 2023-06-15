@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.accounts.models import User
-from .models import Assignment
+from .models import Assignments
 
 
 class AssignmentsSerializer(serializers.ModelSerializer):
@@ -9,6 +9,6 @@ class AssignmentsSerializer(serializers.ModelSerializer):
         queryset=User.objects.values_list('pk', flat=True))
 
     class Meta:
-        model = Assignment
-        exclude = ('user')
+        model = Assignments
+        exclude = ['user']
         read_only_fields = ('id', 'created_at', 'updated_at')

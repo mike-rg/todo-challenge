@@ -4,3 +4,6 @@ REGISTRATION_EMAIL_BASE_URL = "http://localhost:8000"
 REGUSTRATION_EMAIL_MESSAGE = "Hello, please visit the following link to confirm your email address: {url}"
 REGISTRATION_EMAIL_SUBJECT = "Confirm your email address"
 REGISTRATION_EMAIL_FROM = "noreply@example.org"
+
+# Model constants
+EMAIL_EXPIRATION_DAYS = 1

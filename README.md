@@ -35,3 +35,53 @@ El usuario de la aplicación tiene que ser capaz de:
 - El Readme debe contener todas las instrucciones para poder levantar la aplicación, en caso de ser necesario, y explicar cómo se usa.
 - Disponibilidad para realizar una pequeña demo del proyecto al finalizar el challenge.
 - Tiempo para la entrega: Aproximadamente 7 días.
+
+
+## Pasos para ejecutar el proyecto
+Para poder correr el proyecto de manera local seguir los siguientes pasos
+
+1- Hacer build de los servicio
+```sh
+docker compose build
+```
+2- Mover el archivo en .env_example a .env
+```sh
+mv .env_example .env
+```
+3- Correr las migraciones
+```sh
+docker compose run task-manager python manage.py migrate
+```
+4- Ejecutar el proyecto
+```sh
+docker compose up
+```
+## Documentacion de APIs
+- http://localhost:8000/docs/
+- http://localhost:8000/redocs/
+
+## Crear un superusuario e ingresar al Admin
+1- Ejecutar el siguiente comando para crear un superusuario
+```sh
+docker compose run task-manager python manage.py createsuperuser
+```
+2- Ingresar al sitio Admin
+- http://localhost:8000/admin
+## Pasos para ver los emails para el registro de usuario
+1- Ejecutar el siguiente comando para determinar el nombre del archivo del email
+```sh
+docker exec task-manager-local ls /tmp/app-messages
+```
+2- Ver el contenido del mail y copiar la url de verificion
+```sh
+docker exec task-manager-local cat /tmp/app-messages/<nombre-del-archivo>
+```
+## Pasos para correr los tests
+1- Ejecutar pytest
+```sh
+docker compose run task-manager pytest
+```
+2- Ver el reporte de coverage de codigo
+```sh
+docker compose run task-manager coverage report
+```

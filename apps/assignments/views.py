@@ -1,3 +1,5 @@
+import logging
+
 from django_filters import rest_framework as filters
 from rest_framework import viewsets, permissions
 from rest_framework.exceptions import PermissionDenied
@@ -7,6 +9,9 @@ from apps.accounts.models import User
 from .models import Assignments
 from .serializers import AssignmentsSerializer
 from .filters import AssignmentsFilters
+
+
+logger = logging.getLogger(__name__)
 
 
 class AssignmentsViewSet(viewsets.ModelViewSet):
@@ -28,7 +33,9 @@ class AssignmentsViewSet(viewsets.ModelViewSet):
         user = self.request.user
 
         if not user.id == user_id:
+            logger.warning('PermissionDenied: User %s tried to create assignments for other users.', user.id)
             raise PermissionDenied("You can not create assignments for other users")
         else:
+            logger.info('Creating assignment for user: %s', user_id)
             user = User.objects.get(id=user_id)
         serializer.save(user=user)

@@ -3,9 +3,6 @@ name: Django CI
 on:
   push:
     branches: [ "dev" ]
-  pull_request:
-    branches: [ "dev" ]
-
 jobs:
   build:
 
@@ -31,6 +28,10 @@ jobs:
         DJANGO_ENV: ${{ secrets.DJANGO_ENV }}
         DEBUG: ${{ secrets.DEBUG }}
         EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
+        EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+        EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+        EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+        EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
         JWT_SIGNING_KEY: ${{ secrets.JWT_SIGNING_KEY }}
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |

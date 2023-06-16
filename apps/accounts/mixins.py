@@ -50,7 +50,7 @@ class EmailVerificationMixin:
                 return self.handle_expired_token()
 
             user = instance.user
-            instance.delete()        
+            instance.delete()
             user.email_verified = True
             user.is_active = True
             user.save(update_fields=['email_verified', 'is_active'])

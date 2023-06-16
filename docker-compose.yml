@@ -17,7 +17,59 @@ services:
     working_dir: /app
     environment:
       - DJANGO_ENV=local
+      - DJANGO_SETTINGS_MODULE=task_manager.settings.local
       - DEBUG=True
     stdin_open: true
     tty: true
+    restart: always
+
+  task-manager-db:
+    image: postgres:15-alpine
+    container_name: task-manager-db-local
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=task_manager_db
+    volumes:
+      - ./volumes/task-manager-db:/var/lib/postgresql/data
+      - ./init-db/postgres:/docker-entrypoint-initdb.d/
+
+  task-manager-worker:
+    platform: linux/amd64
+    container_name: task-manager-worker-local
+    build:
+      context: .
+      dockerfile: ./compose/local/dockerfiles/Dockerfile-task-manager
+      args:
+        REQUIREMENTS_FILE: local.txt
+    env_file: .env
+    command: celery -A task_manager worker -l info
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8000"
+    working_dir: /app
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - DJANGO_ENV=local
+      - DJANGO_SETTINGS_MODULE=task_manager.settings.local
+      - DEBUG=True
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_CACHE_URL=redis://redis:6379/1
+      - CELERY_BROKER_URL=redis://redis:6379/2
+    depends_on:
+      - task-manager-db
+      - redis
+    stdin_open: true
+    tty: true
+    restart: always
+
+  redis:
+    image: redis:latest
+    container_name: redis-local
+    ports:
+      - 6379:6379
     restart: always

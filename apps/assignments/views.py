@@ -27,7 +27,7 @@ class AssignmentsViewSet(viewsets.ModelViewSet):
         user_id = serializer.validated_data.get('user_id')
         user = self.request.user
 
-        if not user.is_staff and not user.id == user_id:
+        if not user.id == user_id:
             raise PermissionDenied("You can not create assignments for other users")
         else:
             user = User.objects.get(id=user_id)

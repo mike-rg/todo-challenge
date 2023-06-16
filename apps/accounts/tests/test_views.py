@@ -22,9 +22,16 @@ class RegisterUserTestCase(APITestCase):
     def setUp(self):
         self.url = reverse('accounts:register')
 
-    @unittest.skip('Not implemented yet')
     def test_register_user_invalid_email(self):
-        pass
+        data = {
+            'email': 'a',
+            'password': 'Hola.Chau123',
+            'confirm_password': 'Hola.Chau123',
+        }
+        response = self.client.post(self.url, data=data)
+        response_data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('Enter a valid email address.', response_data['email'])
 
     def test_register_user_already_exists_email(self):
         data = {

@@ -1,3 +1,5 @@
+import logging
+
 from smtplib import SMTPException
 
 from django.core import mail, signing
@@ -15,6 +17,8 @@ from .constants import (
 )
 from .exceptions import EmailVerificationTokenException
 from .models import EmailVerificationToken
+
+logger = logging.getLogger(__name__)
 
 
 def _get_verification_url(token):
@@ -77,7 +81,7 @@ def send_email_verification(user):
 
     """
     if getattr(user, REGISTRATION_EMAIL_CONFIRM_MODEL_FIELD):
-        raise ValidationError('Email already confirmed')
+        raise ValidationError('Email already confirmed for user {}'.format(user.email))
     try:
         with transaction.atomic():
             instance = EmailVerificationToken.create_token(user.id)
@@ -92,7 +96,8 @@ def send_email_verification(user):
                 [user.email],
                 fail_silently=False,
             )
+            logger.info('Email verification was sent successfully for user %s', user.email)
     except SMTPException as e:
-        raise SMTPException("Failed to send verification email") from e
+        raise SMTPException("Failed to send verification email for user {}".format(user.email)) from e
     except (IntegrityError, DatabaseError):
-        raise EmailVerificationTokenException('Cannot create verification token')
+        raise EmailVerificationTokenException('Cannot create verification token for user {}'.format(user.email))

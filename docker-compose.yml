@@ -27,6 +27,10 @@ services:
     stdin_open: true
     tty: true
     restart: always
+    depends_on:
+      - task-manager-db
+      - task-manager-worker
+      - redis
 
   task-manager-db:
     image: postgres:15-alpine

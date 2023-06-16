@@ -48,11 +48,7 @@ docker compose build
 ```sh
 mv .env_example .env
 ```
-3- Correr las migraciones
-```sh
-docker compose run task-manager python manage.py migrate
-```
-4- Ejecutar el proyecto
+3- Ejecutar el proyecto
 ```sh
 docker compose up
 ```

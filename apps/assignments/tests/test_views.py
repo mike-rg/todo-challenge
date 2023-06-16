@@ -63,7 +63,6 @@ class AssignmentsViewSetTestCase(TestCase):
     def test_create_assignment(self):
         url = reverse('assignments:assignments-list')
         data = {
-            'user_id': self.user.id,
             'title': 'New Assignment',
             'description': 'New Assignment Description',
             'due_date': '2021-01-01'
@@ -73,18 +72,6 @@ class AssignmentsViewSetTestCase(TestCase):
         self.assertEqual(Assignments.objects.count(), 1)
         self.assertEqual(Assignments.objects.first().title, 'New Assignment')
         self.assertEqual(Assignments.objects.first().description, 'New Assignment Description')
-
-    def test_cannot_create_assignment_for_other_user(self):
-        url = reverse('assignments:assignments-list')
-        data = {
-            'user_id': self.user_staff.id,
-            'title': 'New Assignment',
-            'description': 'New Assignment Description',
-            'due_date': '2021-01-01'
-        }
-        response = self.client.post(url, data, headers=self.headers)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(Assignments.objects.count(), 0)
 
     def test_retrieve_assignment(self):
         assignment = PendingAssignmentFactory.make_assignment_for_user(user=self.user)
@@ -99,7 +86,6 @@ class AssignmentsViewSetTestCase(TestCase):
         assignment = InProgressAssignmentFactory.make_assignment_for_user(user=self.user)
         url = reverse('assignments:assignments-detail', args=[assignment.id])
         data = {
-            'user_id': self.user_staff.id,
             'title': 'New Assignment',
             'description': 'New Assignment Description',
             'due_date': '2021-01-01',

@@ -7,7 +7,7 @@ from rest_framework.exceptions import PermissionDenied
 from apps.accounts.models import User
 
 from .models import Assignments
-from .serializers import AssignmentsSerializer
+from .serializers import AssignmentsCreateSerializer, AssignmentsRetrieveSerializer
 from .filters import AssignmentsFilters
 
 
@@ -16,11 +16,17 @@ logger = logging.getLogger(__name__)
 
 class AssignmentsViewSet(viewsets.ModelViewSet):
     queryset = Assignments.objects.all()
-    serializer_class = AssignmentsSerializer
     filterset_class = AssignmentsFilters
     filters_backends = (filters.DjangoFilterBackend,)
     permissions_classes = (permissions.IsAuthenticated,)
     http_method_names = ['get', 'post', 'put', 'delete']
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return AssignmentsCreateSerializer
+        return AssignmentsRetrieveSerializer
+
+    serializer_class = get_serializer_class
 
     def get_queryset(self):
         user = self.request.user
@@ -29,13 +35,6 @@ class AssignmentsViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(user_id=user.id)
 
     def perform_create(self, serializer):
-        user_id = serializer.validated_data.get('user_id')
         user = self.request.user
-
-        if not user.id == user_id:
-            logger.warning('PermissionDenied: User %s tried to create assignments for other users.', user.id)
-            raise PermissionDenied("You can not create assignments for other users")
-        else:
-            logger.info('Creating assignment for user: %s', user_id)
-            user = User.objects.get(id=user_id)
+        logger.info('Creating assignment for user: %s', user)
         serializer.save(user=user)

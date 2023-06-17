@@ -14,10 +14,10 @@ class BaseAssignmentFactory(DjangoModelFactory):
         model = Assignments
 
     @classmethod
-    def make_assignment_for_user(cls, user, due_date=None):
+    def make_assignment_for_user(cls, user, due_date=None, **kwargs):
         if not due_date:
             due_date = timezone.now() + timezone.timedelta(days=1)  # default due date
-        assignment = cls.build()
+        assignment = cls.build(**kwargs)
         assignment.user = user
         assignment.due_date = due_date
         assignment.save()

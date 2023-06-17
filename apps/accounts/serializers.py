@@ -55,6 +55,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             return instance
 
         except IntegrityError:
+            logger.error('Cannot create user for email:{}'.format(email))
             raise serializers.ValidationError("Cannot create user for email:{}.".format(email))
 
         except ValidationError as e:  # noqa: F841

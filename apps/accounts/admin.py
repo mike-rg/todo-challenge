@@ -1,21 +1,13 @@
-import logging
-
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .exceptions import EmailVerificationTokenException
-from .helpers import send_email_verification
+from .tasks import send_email_verification_task
 from .models import User, EmailVerificationToken
-
-logger = logging.getLogger(__name__)
 
 
 def resend_email_verification(modeladmin, request, queryset):
-    for user in queryset.filter(email_verified=False):
-        try:
-            send_email_verification(user)
-        except EmailVerificationTokenException:
-            logger.error('An error occurred to resend email verification', exc_info=True)
+    for user in queryset.filter(email_verified=True):
+        send_email_verification_task.delay(user_id=user.id)
 
 
 resend_email_verification.short_description = "Resend confirmation email"

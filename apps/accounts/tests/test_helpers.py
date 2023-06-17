@@ -1,5 +1,4 @@
 from unittest import mock
-from smtplib import SMTPException
 
 from django.test import TestCase
 from django.core import mail
@@ -12,6 +11,7 @@ from apps.accounts.constants import (
     REGISTRATION_EMAIL_FROM
 )
 from apps.accounts.helpers import encode_token, decode_token, send_email_verification
+from apps.accounts.exceptions import EmailVerificationTokenException
 
 from .factories.user import UserFactory
 from .factories.email import ValidEmailVerificationFactory
@@ -47,10 +47,10 @@ class HelpersEmailVerificationTestCase(TestCase):
 
     def test_fail_send_email_verification(self):
         with mock.patch('django.core.mail.send_mail') as mocked_send_mail:
-            mocked_send_mail.side_effect = SMTPException('Failed to send confirmation email')
-            with self.assertRaises(SMTPException):
+            mocked_send_mail.side_effect = EmailVerificationTokenException('Failed to send confirmation email')
+            with self.assertRaises(EmailVerificationTokenException):
                 send_email_verification(self.no_verified_user)
-        self.assertFalse(self.no_verified_user.email_verify_tokens.exists())
+        self.assertTrue(self.no_verified_user.email_verify_tokens.exists())
 
     def test_send_email_verification(self):
         with mock.patch('apps.accounts.helpers._get_verification_url', return_value='http://example.com/TOKEN'):

@@ -1,14 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from apps.accounts.helpers import send_email_verification
-
-from .models import User
+from .tasks import send_email_verification_task
+from .models import User, EmailVerificationToken
 
 
 def resend_email_verification(modeladmin, request, queryset):
-    for user in queryset.filter(email_verified=False, is_active=False):
-        send_email_verification(user)
+    for user in queryset.filter(email_verified=True):
+        send_email_verification_task.delay(user_id=user.id)
 
 
 resend_email_verification.short_description = "Resend confirmation email"
@@ -20,3 +19,10 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(User, UserAdmin)
+
+
+class EmailVerificationTokenAdmin(admin.ModelAdmin):
+    list_display = ['id', 'expired_at', 'user', 'created_at', 'updated_at']
+
+
+admin.site.register(EmailVerificationToken, EmailVerificationTokenAdmin)

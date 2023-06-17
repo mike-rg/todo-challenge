@@ -81,3 +81,8 @@ docker compose run task-manager pytest
 ```sh
 docker compose run task-manager coverage report
 ```
+## Track de las tareas de celery
+1- Para poder monitorear las tareas de celery ingresar a
+```sh
+http://localhost:8888/
+```

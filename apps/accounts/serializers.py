@@ -1,12 +1,13 @@
 import logging
 
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError
 from django.contrib.auth.password_validation import validate_password
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from .constants import REGISTRATION_EMAIL_CONFIRM
+from .exceptions import EmailVerificationTokenException
 from .helpers import send_email_verification
 from .models import User
 
@@ -38,7 +39,6 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         validate_password(password=value)
         return value
 
-    @transaction.atomic
     def create(self, validated_data):
         try:
             email = validated_data.pop('email')
@@ -50,19 +50,19 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 
             if REGISTRATION_EMAIL_CONFIRM:
                 send_email_verification(instance)
+                logger.info('Email verification was sent successfully for user email:{}'.format(instance.email))
 
             return instance
 
         except IntegrityError:
-            raise serializers.ValidationError("Email address already exists.")
+            raise serializers.ValidationError("Cannot create user for email:{}.".format(email))
 
-        except ValidationError as e:
-            logger.error('An error occurred during user creation. Validated data: %s', validated_data, exc_info=True)
+        except ValidationError as e:  # noqa: F841
+            logger.error('An error occurred during user creation for email:{}'.format(email), exc_info=True)
             raise serializers.ValidationError(str(e))
 
-        except Exception as e:  # noqa: F841
-            logger.error('An error occurred during user creation.', exc_info=True)
-            raise serializers.ValidationError("An error occurred during user creation.")
+        except EmailVerificationTokenException as e:  # noqa: F841
+            raise serializers.ValidationError(str(e))
 
 
 class UserEmailSerializer(serializers.ModelSerializer):

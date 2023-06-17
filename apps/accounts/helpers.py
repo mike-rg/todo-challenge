@@ -78,26 +78,34 @@ def send_email_verification(user):
 
     Raises:
         ValidationError: If the user's email is already confirmed or if there is a failure in sending the email.
+        EmailVerificationTokenException: If there is an error in creating the verification token or sending the email.
 
     """
     if getattr(user, REGISTRATION_EMAIL_CONFIRM_MODEL_FIELD):
-        raise ValidationError('Email already confirmed for user {}'.format(user.email))
+        logger.warning('Email already confirmed for user email:{}'.format(user.email))
+        raise ValidationError('Email already confirmed for user email:{}'.format(user.email))
     try:
-        with transaction.atomic():
-            instance = EmailVerificationToken.create_token(user.id)
-            token = encode_token(instance)
-            url = _get_verification_url(token)
+        instance = EmailVerificationToken.get_or_create_token(user.id)
+        token = encode_token(instance)
+        url = _get_verification_url(token)
+        message = REGUSTRATION_EMAIL_MESSAGE.format(url=url,)
+        mail.send_mail(
+            REGISTRATION_EMAIL_SUBJECT,
+            message,
+            REGISTRATION_EMAIL_FROM,
+            [user.email],
+            fail_silently=False,
+        )
+    except SMTPException as e:  # noqa: F84
+        logger.exception('Failed to send verifiction email for user id:{}'.format(user.id), extra={
+            'user_id': user.id,
+            'token_id': instance.id,
+        })
+        raise EmailVerificationTokenException("Failed to send verification email for user {}".format(user.id)) from e
+    except (IntegrityError, DatabaseError) as e:  # noqa: F84
+        logger.error('Cannot create verification token for user id:{}'.format(user.id), exc_info=True)
+        raise EmailVerificationTokenException('Cannot create verification token for user id:{}'.format(user.id))
 
-            message = REGUSTRATION_EMAIL_MESSAGE.format(url=url,)
-            mail.send_mail(
-                REGISTRATION_EMAIL_SUBJECT,
-                message,
-                REGISTRATION_EMAIL_FROM,
-                [user.email],
-                fail_silently=False,
-            )
-            logger.info('Email verification was sent successfully for user %s', user.email)
-    except SMTPException as e:
-        raise SMTPException("Failed to send verification email for user {}".format(user.email)) from e
-    except (IntegrityError, DatabaseError):
-        raise EmailVerificationTokenException('Cannot create verification token for user {}'.format(user.email))
+    except Exception as e:  # noqa: F841
+        logger.error('An error occurred to send email verification for user id:{}'.format(user.id), exc_info=True)
+        raise EmailVerificationTokenException('An error occurred to send email verification for user id:{}'.format(user.id))

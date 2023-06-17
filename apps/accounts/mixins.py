@@ -1,5 +1,4 @@
 import logging
-import traceback
 
 from django.db import DatabaseError, IntegrityError, transaction
 from django.core import signing
@@ -16,40 +15,30 @@ logger = logging.getLogger(__name__)
 
 class EmailVerificationMixin:
     def handle_expired_token(self):
-        logger.warning('Email verification token expired.')
-
         return Response(
             {'message': 'Token expired.'},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    def handle_invalid_token(self, exc_info):
-        logger.error('Failed token verification.', exc_info=exc_info)
-
+    def handle_invalid_token(self):
         return Response(
             {'message': 'Invalid token.'},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     def handle_successful_verification(self):
-        logger.info('Email verified successfully.')
-
         return Response(
             {'message': 'Email verified successfully.'},
             status=status.HTTP_200_OK,
         )
 
-    def handle_unsuccessful_verification(self, exc_info):
-        logger.error('Failed to verify email.', exc_info=exc_info)
-
+    def handle_unsuccessful_verification(self):
         return Response(
             {'message': 'Cannot verified email.'},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     def handle_invalid_token_data(self):
-        logger.error('Failed token verification.')
-
         return Response(
             {'message': 'Invalid token.'},
             status=status.HTTP_400_BAD_REQUEST,
@@ -70,6 +59,7 @@ class EmailVerificationMixin:
 
             instance = EmailVerificationToken.get_token(**data)
             if not instance.is_token_expired():
+                logger.warning('Failed token verification. token id:{}'.format(instance.id))
                 return self.handle_expired_token()
 
             user = instance.user
@@ -77,10 +67,13 @@ class EmailVerificationMixin:
             user.email_verified = True
             user.is_active = True
             user.save(update_fields=['email_verified', 'is_active'])
+            logger.info('Email verified successfully for user id:{}'.format(user.id))
             return self.handle_successful_verification()
 
         except (EmailVerificationToken.DoesNotExist, signing.SignatureExpired, signing.BadSignature) as e:  # noqa: F841
-            return self.handle_invalid_token(exc_info=traceback.format_exc())
+            logger.error('Failed token verification.', exc_info=True)
+            return self.handle_invalid_token()
 
         except (MultipleObjectsReturned, DatabaseError, IntegrityError, ValidationError) as e:  # noqa: F841
-            return self.handle_unsuccessful_verification(exc_info=traceback.format_exc())
+            logger.error('Failed to verify email.', exc_info=True)
+            return self.handle_unsuccessful_verification()

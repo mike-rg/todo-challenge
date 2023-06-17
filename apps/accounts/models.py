@@ -35,6 +35,10 @@ class EmailVerificationToken(BaseModel):
     user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='email_verify_tokens')
     expired_at = models.DateTimeField(default=get_expiration_date)
 
+    class Meta:
+        verbose_name = 'Email Verification Token'
+        verbose_name_plural = 'Email Verification Tokens'
+
     def __str__(self):
         return f'{self.user} - {self.expired_at}'
 
@@ -43,8 +47,12 @@ class EmailVerificationToken(BaseModel):
         return cls.objects.select_related('user').get(id=token_id, user_id=user_id)
 
     @classmethod
-    def create_token(cls, user_id, **kwargs):
-        return cls.objects.create(user_id=user_id)
+    def get_or_create_token(cls, user_id, **kwargs):
+        token, create = cls.objects.get_or_create(user_id=user_id)
+        if not create:
+            token.expired_at = get_expiration_date()
+            token.save()
+        return token
 
     def is_token_expired(self):
         return self.expired_at > timezone.now()

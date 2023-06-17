@@ -2,14 +2,10 @@ import logging
 
 from django_filters import rest_framework as filters
 from rest_framework import viewsets, permissions
-from rest_framework.exceptions import PermissionDenied
-
-from apps.accounts.models import User
 
 from .models import Assignments
 from .serializers import AssignmentsCreateSerializer, AssignmentsRetrieveSerializer
 from .filters import AssignmentsFilters
-
 
 logger = logging.getLogger(__name__)
 
@@ -36,5 +32,5 @@ class AssignmentsViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
-        logger.info('Creating assignment for user: %s', user)
         serializer.save(user=user)
+        logger.info('Creating assignment for user id:{}'.format(user.id))

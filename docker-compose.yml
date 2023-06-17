@@ -96,7 +96,7 @@ services:
     platform: linux/amd64
     image: mher/flower
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_BROKER_URL=redis://redis:6379/2
       - FLOWER_PORT=8888
     ports:
       - 8888:8888

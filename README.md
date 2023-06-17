@@ -40,13 +40,13 @@ El usuario de la aplicación tiene que ser capaz de:
 ## Pasos para ejecutar el proyecto
 Para poder correr el proyecto de manera local seguir los siguientes pasos
 
-1- Hacer build de los servicio
+1- Copiar archivo .env
+```sh
+cp .env_example .env
+```
+2- Hacer build de los servicio
 ```sh
 docker compose build
-```
-2- Mover el archivo en .env_example a .env
-```sh
-mv .env_example .env
 ```
 3- Ejecutar el proyecto
 ```sh

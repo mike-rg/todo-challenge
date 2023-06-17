@@ -6,7 +6,7 @@ from .models import User, EmailVerificationToken
 
 
 def resend_email_verification(modeladmin, request, queryset):
-    for user in queryset.filter(email_verified=True):
+    for user in queryset.filter(email_verified=False):
         send_email_verification_task.delay(user_id=user.id)
 
 

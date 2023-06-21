@@ -65,7 +65,6 @@ services:
       - "8001:8000"
     working_dir: /app
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
       - DJANGO_ENV=local
       - DJANGO_SETTINGS_MODULE=task_manager.settings.local
       - DEBUG=True

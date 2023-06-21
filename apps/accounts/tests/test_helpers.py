@@ -1,14 +1,13 @@
 from unittest import mock
 
-from django.test import TestCase
+from django.conf import settings
 from django.core import mail
-
 from django.core.exceptions import ValidationError
+from django.test import TestCase
 
 from apps.accounts.constants import (
     REGUSTRATION_EMAIL_MESSAGE,
     REGISTRATION_EMAIL_SUBJECT,
-    REGISTRATION_EMAIL_FROM
 )
 from apps.accounts.helpers import encode_token, decode_token, send_email_verification
 from apps.accounts.exceptions import EmailVerificationTokenException
@@ -59,6 +58,6 @@ class HelpersEmailVerificationTestCase(TestCase):
         email = mail.outbox[0]
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(email.subject, REGISTRATION_EMAIL_SUBJECT)
-        self.assertEqual(email.from_email, REGISTRATION_EMAIL_FROM)
+        self.assertEqual(email.from_email, settings.REGISTRATION_EMAIL_FROM)
         self.assertEqual(email.to, ['foo@example.com'])
         self.assertEqual(email.body, REGUSTRATION_EMAIL_MESSAGE.format(url='http://example.com/TOKEN'))

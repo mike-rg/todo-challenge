@@ -1,4 +1,5 @@
-from django.contrib import admin
+from django.conf import settings
+from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .tasks import send_email_verification_task
@@ -6,9 +7,11 @@ from .models import User, EmailVerificationToken
 
 
 def resend_email_verification(modeladmin, request, queryset):
-    for user in queryset.filter(email_verified=False):
-        send_email_verification_task.delay(user_id=user.id)
-
+    if settings.REGISTRATION_EMAIL_CONFIRM_ENABLED:
+        for user in queryset.filter(email_verified=False):
+            send_email_verification_task.delay(user_id=user.id)
+    else:
+        messages.warning(request, "Email verification is disabled")
 
 resend_email_verification.short_description = "Resend confirmation email"
 

@@ -4,7 +4,7 @@ from .base import *
 
 DEBUG = True
 
-
+# Email settings
 if os.getenv('EMAIL_BACKEND') == 'File':
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = '/tmp/app-messages'
@@ -15,6 +15,14 @@ else:
     EMAIL_PORT = os.getenv('EMAIL_PORT')
 
 
+# Email verification
+REGISTRATION_EMAIL_CONFIRM_ENABLED = True
+REGISTRATION_EMAIL_CONFIRM_MODEL_FIELD = "email_verified"
+REGISTRATION_EMAIL_BASE_URL = "http://localhost:8000"
+REGISTRATION_EMAIL_FROM = "noreply@example.org"
+
+
+# Logging settings
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

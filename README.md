@@ -37,7 +37,7 @@ El usuario de la aplicación tiene que ser capaz de:
 - Tiempo para la entrega: Aproximadamente 7 días.
 
 
-## Pasos para ejecutar el proyecto
+## Pasos para ejecutar el proyecto con docker compose
 Para poder correr el proyecto de manera local seguir los siguientes pasos
 
 1- Copiar archivo .env
@@ -86,6 +86,9 @@ docker compose run task-manager coverage report
 http://localhost:8888/
 ```
 ## DockerHub
+Repositoty
+https://hub.docker.com/r/mikerg/invera-challenge-docker
+
 Run docker with an environment varibles file
 ```sh
 $ docker run -env-file <path-dir>/.env --entrypoint /app/entrypoint -p 8000:8000 mikerg/invera-challenge-docker

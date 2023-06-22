@@ -54,7 +54,6 @@ docker compose up
 ```
 ## Documentacion de APIs
 - http://localhost:8000/docs/
-- http://localhost:8000/redocs/
 
 ## Crear un superusuario e ingresar al Admin
 1- Ejecutar el siguiente comando para crear un superusuario
@@ -85,4 +84,9 @@ docker compose run task-manager coverage report
 1- Para poder monitorear las tareas de celery ingresar a
 ```sh
 http://localhost:8888/
+```
+## DockerHub
+Run docker with an environment varibles file
+```sh
+$ docker run -env-file <path-dir>/.env --entrypoint /app/entrypoint -p 8000:8000 mikerg/invera-challenge-docker
 ```

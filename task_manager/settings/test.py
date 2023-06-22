@@ -13,6 +13,7 @@ REGISTRATION_EMAIL_CONFIRM_MODEL_FIELD = "email_verified"
 REGISTRATION_EMAIL_BASE_URL = "http://localhost:8000"
 REGISTRATION_EMAIL_FROM = "noreply@example.org"
 
+
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 

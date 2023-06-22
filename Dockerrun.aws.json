@@ -1,0 +1,21 @@
+{
+    "AWSEBDockerrunVersion": "1",
+    "Image": {
+      "Name": "mikerg/invera-challenge-docker",
+      "Update": "true"
+    },
+    "Ports": [
+      {
+          "ContainerPort": "8000",
+          "HostPort": 8000
+      }
+    ],
+    "Entrypoint": "/app/entrypoint",
+    "container_commands": [
+      {
+        "command": "python manage.py collectstatic --noinput",
+        "leader_only": "true"
+      }
+    ]
+  }
+  

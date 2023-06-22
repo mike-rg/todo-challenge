@@ -9,7 +9,7 @@ services:
       args:
         REQUIREMENTS_FILE: local.txt
     env_file: .env
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: sh ./compose/local/django/entrypoint
     volumes:
       - .:/app
       - ./volumes/tmp/app-messages:/tmp/app-messages
@@ -56,7 +56,7 @@ services:
       args:
         REQUIREMENTS_FILE: local.txt
     env_file: .env
-    command: celery -A task_manager worker -l info
+    command: sh ./compose/local/celery/entrypoint
     volumes:
       - .:/app
       - ./volumes/tmp/app-messages:/tmp/app-messages

@@ -2,6 +2,7 @@
 .git
 .gitignore
 .gitattributes
+.github
 
 # CI
 .codeclimate.yml
@@ -13,6 +14,7 @@ docker-compose.yml
 Dockerfile
 .docker
 .dockerignore
+volumes/
 
 # Byte-compiled / optimized / DLL files
 **/__pycache__/
@@ -53,6 +55,7 @@ htmlcov/
 .tox/
 .coverage
 .cache
+.pytest_cache/
 nosetests.xml
 coverage.xml
 
@@ -71,6 +74,7 @@ target/
 
 # Virtual environment
 .env
+.env_example
 .venv/
 venv/
 
@@ -86,3 +90,7 @@ venv/
 
 # VS Code
 .vscode/
+.pre-commit-config.yaml
+
+# Aws
+Dockerrun.aws.json

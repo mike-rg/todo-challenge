@@ -37,14 +37,14 @@ El usuario de la aplicación tiene que ser capaz de:
 - Tiempo para la entrega: Aproximadamente 7 días.
 
 
-## Pasos para ejecutar el proyecto
+## Pasos para ejecutar el proyecto con docker compose
 Para poder correr el proyecto de manera local seguir los siguientes pasos
 
 1- Copiar archivo .env
 ```sh
 cp .env_example .env
 ```
-2- Hacer build de los servicio
+2- Hacer build de los servicios
 ```sh
 docker compose build
 ```
@@ -52,37 +52,59 @@ docker compose build
 ```sh
 docker compose up
 ```
-## Documentacion de APIs
+## Documentacion de APIs url
 - http://localhost:8000/docs/
-- http://localhost:8000/redocs/
 
-## Crear un superusuario e ingresar al Admin
-1- Ejecutar el siguiente comando para crear un superusuario
+## Crear super usuario e ingresar a Admin
+1- Ejecutar el siguiente comando para crear un super usuario. Completar los datos solicitados
 ```sh
 docker compose run task-manager python manage.py createsuperuser
 ```
-2- Ingresar al sitio Admin
+2- Ingresar al sitio Admin e ingresar los datos de super usuario creado en el paso anterior
 - http://localhost:8000/admin
-## Pasos para ver los emails para el registro de usuario
-1- Ejecutar el siguiente comando para determinar el nombre del archivo del email
+## Ver los emails de verificacion de registro de usuarios
+1- Ejecutar el siguiente comando para determinar el nombre del archivo de email de verificacion
 ```sh
 docker exec task-manager-local ls /tmp/app-messages
 ```
-2- Ver el contenido del mail y copiar la url de verificion
+2- Ver el contenido del archivo de email verificacion y copiar url de verificion
 ```sh
 docker exec task-manager-local cat /tmp/app-messages/<nombre-del-archivo>
 ```
-## Pasos para correr los tests
-1- Ejecutar pytest
+3- Ingresar a la url de verificacion en el navegador para confirmar email
+## Ejecutar tests
+1- Ejecutar el siguiente comando para ejecutar los tests
 ```sh
 docker compose run task-manager pytest
 ```
-2- Ver el reporte de coverage de codigo
+2- Ejecutar el siguiente comando para generar reporte de coverage de codigo
 ```sh
 docker compose run task-manager coverage report
 ```
-## Track de las tareas de celery
-1- Para poder monitorear las tareas de celery ingresar a
+## Monitorear tareas de celery
+1- Ingresar a la siguiente url para monitorear las tareas de celery
 ```sh
 http://localhost:8888/
+```
+## Dockerhub repositorio
+Repositorio url
+```sh
+https://hub.docker.com/r/mikerg/invera-challenge-docker
+```
+Obtener imagen docker
+```sh
+docker pull mikerg/invera-challenge-docker
+```
+Ejecutar 'docker' con un archivo de variables de entorno
+```sh
+$ docker run -env-file <path-dir>/.env --entrypoint /app/entrypoint -p 8000:8000 mikerg/invera-challenge-docker
+```
+## Github repositorio
+Repositorio url
+```sh
+https://github.com/mike-rg/todo-challenge
+```
+## Site url
+```sh
+http://invera.mike-rg-challenges.com/
 ```

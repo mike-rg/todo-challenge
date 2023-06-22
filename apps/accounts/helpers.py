@@ -2,18 +2,16 @@ import logging
 
 from smtplib import SMTPException
 
+from django.conf import settings
 from django.core import mail, signing
-from django.db import IntegrityError, DatabaseError, transaction
+from django.db import IntegrityError, DatabaseError
 from django.urls import reverse
 
 from django.core.exceptions import ValidationError
 
 from .constants import (
-    REGISTRATION_EMAIL_CONFIRM_MODEL_FIELD,
-    REGISTRATION_EMAIL_BASE_URL,
     REGUSTRATION_EMAIL_MESSAGE,
     REGISTRATION_EMAIL_SUBJECT,
-    REGISTRATION_EMAIL_FROM
 )
 from .exceptions import EmailVerificationTokenException
 from .models import EmailVerificationToken
@@ -31,7 +29,7 @@ def _get_verification_url(token):
         A string representing the verification url.
     """
     path = reverse('accounts:verify-email', args=(token,))
-    return REGISTRATION_EMAIL_BASE_URL + path
+    return settings.REGISTRATION_EMAIL_BASE_URL + path
 
 
 def encode_token(token):
@@ -81,7 +79,7 @@ def send_email_verification(user):
         EmailVerificationTokenException: If there is an error in creating the verification token or sending the email.
 
     """
-    if getattr(user, REGISTRATION_EMAIL_CONFIRM_MODEL_FIELD):
+    if getattr(user, settings.REGISTRATION_EMAIL_CONFIRM_MODEL_FIELD):
         logger.warning('Email already confirmed for user email:{}'.format(user.email))
         raise ValidationError('Email already confirmed for user email:{}'.format(user.email))
     try:
@@ -92,7 +90,7 @@ def send_email_verification(user):
         mail.send_mail(
             REGISTRATION_EMAIL_SUBJECT,
             message,
-            REGISTRATION_EMAIL_FROM,
+            settings.REGISTRATION_EMAIL_FROM,
             [user.email],
             fail_silently=False,
         )

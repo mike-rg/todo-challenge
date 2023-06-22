@@ -20,4 +20,5 @@ RUN chmod +x /app/entrypoint
 
 COPY . .
 
+
 EXPOSE 8000

@@ -1,14 +1,13 @@
 from unittest import mock
 
-from django.test import TestCase
+from django.conf import settings
 from django.core import mail
-
 from django.core.exceptions import ValidationError
+from django.test import TestCase
 
 from apps.accounts.constants import (
     REGUSTRATION_EMAIL_MESSAGE,
     REGISTRATION_EMAIL_SUBJECT,
-    REGISTRATION_EMAIL_FROM
 )
 from apps.accounts.helpers import encode_token, decode_token, send_email_verification
 from apps.accounts.exceptions import EmailVerificationTokenException
@@ -18,7 +17,6 @@ from .factories.email import ValidEmailVerificationFactory
 
 
 class HelpersEmailVerificationTestCase(TestCase):
-
     def setUp(self):
         self.user = UserFactory(email='foo@example.com')
         self.token = ValidEmailVerificationFactory(user=self.user)
@@ -36,10 +34,9 @@ class HelpersEmailVerificationTestCase(TestCase):
         self.assertIsNotNone(decoded_token)
         self.assertEqual(decoded_token.get('token_id'), str(self.token.id))
         self.assertEqual(decoded_token.get('user_id'), str(self.token.user.id))
-        self.assertEqual(decoded_token.get('expired_at'), self.token.expired_at.isoformat())
-
-    def test_decode_token(self):
-        pass
+        self.assertEqual(
+            decoded_token.get('expired_at'), self.token.expired_at.isoformat()
+        )
 
     def test_already_verified_token(self):
         with self.assertRaises(ValidationError):
@@ -47,18 +44,26 @@ class HelpersEmailVerificationTestCase(TestCase):
 
     def test_fail_send_email_verification(self):
         with mock.patch('django.core.mail.send_mail') as mocked_send_mail:
-            mocked_send_mail.side_effect = EmailVerificationTokenException('Failed to send confirmation email')
+            mocked_send_mail.side_effect = EmailVerificationTokenException(
+                'Failed to send confirmation email'
+            )
             with self.assertRaises(EmailVerificationTokenException):
                 send_email_verification(self.no_verified_user)
         self.assertTrue(self.no_verified_user.email_verify_tokens.exists())
 
     def test_send_email_verification(self):
-        with mock.patch('apps.accounts.helpers._get_verification_url', return_value='http://example.com/TOKEN'):
+        with mock.patch(
+            'apps.accounts.helpers._get_verification_url',
+            return_value='http://example.com/TOKEN',
+        ):
             send_email_verification(self.user)
 
         email = mail.outbox[0]
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(email.subject, REGISTRATION_EMAIL_SUBJECT)
-        self.assertEqual(email.from_email, REGISTRATION_EMAIL_FROM)
+        self.assertEqual(email.from_email, settings.REGISTRATION_EMAIL_FROM)
         self.assertEqual(email.to, ['foo@example.com'])
-        self.assertEqual(email.body, REGUSTRATION_EMAIL_MESSAGE.format(url='http://example.com/TOKEN'))
+        self.assertEqual(
+            email.body,
+            REGUSTRATION_EMAIL_MESSAGE.format(url='http://example.com/TOKEN'),
+        )

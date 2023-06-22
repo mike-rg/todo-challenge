@@ -1,8 +1,21 @@
 from .base import *
 
 DEBUG = True
+
+# Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/app-messages'
+
+
+# Email verification
+REGISTRATION_EMAIL_CONFIRM_ENABLED = True
+REGISTRATION_EMAIL_CONFIRM_MODEL_FIELD = "email_verified"
+REGISTRATION_EMAIL_BASE_URL = "http://localhost:8000"
+REGISTRATION_EMAIL_FROM = "noreply@example.org"
+
+
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -11,6 +24,8 @@ DATABASES = {
     }
 }
 
+
+# Logging settings
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

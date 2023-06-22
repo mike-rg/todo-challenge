@@ -24,8 +24,9 @@ jobs:
         pip install -r requirements/test.txt
     - name: Run Tests
       env:
-        DJANGO_SETTINGS_MODULE: ${{ secrets.DJANGO_SETTINGS_MODULE }}
+        ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
         DJANGO_ENV: ${{ secrets.DJANGO_ENV }}
+        DJANGO_SETTINGS_MODULE: ${{ secrets.DJANGO_SETTINGS_MODULE }}
         DEBUG: ${{ secrets.DEBUG }}
         EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
         EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
@@ -33,6 +34,9 @@ jobs:
         EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
         EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
         JWT_SIGNING_KEY: ${{ secrets.JWT_SIGNING_KEY }}
+        REGISTRATION_EMAIL_CONFIRM_ENABLED: ${{ secrets.REGISTRATION_EMAIL_CONFIRM_ENABLED }}
+        REGISTRATION_EMAIL_BASE_URL: ${{ secrets.REGISTRATION_EMAIL_BASE_URL }}
+        REGISTRATION_EMAIL_FROM: ${{ secrets.REGISTRATION_EMAIL_FROM }}
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |
         pytest --cov=apps --cov-report html

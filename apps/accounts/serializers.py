@@ -1,12 +1,12 @@
 import logging
 
 from django.db import IntegrityError
+from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from .constants import REGISTRATION_EMAIL_CONFIRM
 from .exceptions import EmailVerificationTokenException
 from .helpers import send_email_verification
 from .models import User
@@ -48,7 +48,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
             instance.save()
 
-            if REGISTRATION_EMAIL_CONFIRM:
+            if settings.REGISTRATION_EMAIL_CONFIRM_ENABLED:
                 send_email_verification(instance)
                 logger.info('Email verification was sent successfully for user email:{}'.format(instance.email))
 

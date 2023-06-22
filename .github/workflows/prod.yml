@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
 jobs:
-  build:
+  tests:
 
     runs-on: ubuntu-latest
     strategy:
@@ -41,3 +41,34 @@ jobs:
       run: |
         pytest --cov=apps --cov-report html
         coverage report
+
+  build:
+
+    if: github.event_name == 'push' || github.event.pull_request.merged == true
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v2
+        with:
+          images: mikerg/invera-challenge-docker
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./compose/prod/dockerfiles/Dockerfile-task-manager
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

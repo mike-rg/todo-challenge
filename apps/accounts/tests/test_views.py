@@ -1,4 +1,4 @@
-import unittest
+from unittest import mock
 
 from django.core import signing
 from django.urls import reverse
@@ -6,10 +6,12 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.accounts.models import User
+from apps.accounts.exceptions import EmailVerificationTokenException
 from apps.accounts.helpers import encode_token
 
 from .factories.user import UserFactory
-from .factories.email import ExpiredEmailVerificationFactory, ValidEmailVerificationFactory
+from .factories.email import ExpiredEmailVerificationTokenFactory, ValidEmailVerificationTokenFactory
 
 
 class RegisterUserTestCase(APITestCase):
@@ -82,6 +84,21 @@ class RegisterUserTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_data.get('email'), 'bar@example.com')
 
+    def test_register_user_verification_token_fail(self):
+        data = {
+            'email': 'bar@example.com',
+            'password': 'Hola.Chau123',
+            'confirm_password': 'Hola.Chau123',
+        }
+        with mock.patch('django.core.mail.send_mail') as mocked_send_mail:
+            mocked_send_mail.side_effect = EmailVerificationTokenException()
+            response = self.client.post(self.url, data=data)
+            response_data = response.json()
+
+        user = User.objects.get(email='bar@example.com')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn(f'An error occurred to send email verification for user id:{user.id}', response_data)
+
 
 class EmailVerificationTestCase(APITestCase):
 
@@ -89,8 +106,8 @@ class EmailVerificationTestCase(APITestCase):
         self.user_1 = UserFactory(email='valid@example.com')
         self.user_2 = UserFactory(email='expired@example.com')
         self.user_3 = UserFactory(email='invalid@example.com')
-        self.valid_token = ValidEmailVerificationFactory(user=self.user_1)
-        self.expired_token = ExpiredEmailVerificationFactory(user=self.user_2)
+        self.valid_token = ValidEmailVerificationTokenFactory(user=self.user_1)
+        self.expired_token = ExpiredEmailVerificationTokenFactory(user=self.user_2)
 
     def test_no_token(self):
         token = '?'

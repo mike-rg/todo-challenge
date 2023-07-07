@@ -53,15 +53,18 @@ docker compose build
 docker compose up
 ```
 ## Documentacion de APIs url
-- http://localhost:8000/docs/
-
+```sh
+http://localhost:8000/docs/
+```
 ## Crear super usuario e ingresar a Admin
 1- Ejecutar el siguiente comando para crear un super usuario. Completar los datos solicitados
 ```sh
 docker compose run task-manager python manage.py createsuperuser
 ```
 2- Ingresar al sitio Admin e ingresar los datos de super usuario creado en el paso anterior
-- http://localhost:8000/admin
+```sh
+http://localhost:8000/admin
+```
 ## Ver los emails de verificacion de registro de usuarios
 1- Ejecutar el siguiente comando para determinar el nombre del archivo de email de verificacion
 ```sh

@@ -13,13 +13,13 @@ from apps.accounts.helpers import encode_token, decode_token, send_email_verific
 from apps.accounts.exceptions import EmailVerificationTokenException
 
 from .factories.user import UserFactory
-from .factories.email import ValidEmailVerificationFactory
+from .factories.email import ValidEmailVerificationTokenFactory
 
 
 class HelpersEmailVerificationTestCase(TestCase):
     def setUp(self):
         self.user = UserFactory(email='foo@example.com')
-        self.token = ValidEmailVerificationFactory(user=self.user)
+        self.token = ValidEmailVerificationTokenFactory(user=self.user)
         self.verified_user = UserFactory(email='bar@example.com', email_verified=True)
         self.no_verified_user = UserFactory(email='foobar@example.com')
 

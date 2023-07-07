@@ -58,11 +58,11 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             logger.error('Cannot create user for email:{}'.format(email))
             raise serializers.ValidationError("Cannot create user for email:{}.".format(email))
 
-        except ValidationError as e:  # noqa: F841
-            logger.error('An error occurred during user creation for email:{}'.format(email), exc_info=True)
+        except EmailVerificationTokenException as e:  # noqa: F841
             raise serializers.ValidationError(str(e))
 
-        except EmailVerificationTokenException as e:  # noqa: F841
+        except Exception as e:  # noqa: F841
+            logger.error('An error occurred during user creation for email: {}'.format(email), exc_info=True)
             raise serializers.ValidationError(str(e))
 
 

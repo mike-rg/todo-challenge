@@ -1,6 +1,7 @@
 import logging
 
 from smtplib import SMTPException
+from typing import Any, Dict
 
 from django.conf import settings
 from django.core import mail, signing
@@ -14,12 +15,12 @@ from .constants import (
     REGISTRATION_EMAIL_SUBJECT,
 )
 from .exceptions import EmailVerificationTokenException
-from .models import EmailVerificationToken
+from .models import EmailVerificationToken, User
 
 logger = logging.getLogger(__name__)
 
 
-def _get_verification_url(token):
+def _get_verification_url(token: str) -> str:
     """Returns the verification url with a given token.
 
     Args:
@@ -32,7 +33,7 @@ def _get_verification_url(token):
     return settings.REGISTRATION_EMAIL_BASE_URL + path
 
 
-def encode_token(token):
+def encode_token(token: EmailVerificationToken) -> str:
     """Encodes the token object into a secure format.
 
     Args:
@@ -48,7 +49,7 @@ def encode_token(token):
     })
 
 
-def decode_token(token):
+def decode_token(token: str) -> Dict[str, Any]:
     """Decodes a token and return the data payload.
 
     Args:
@@ -68,7 +69,7 @@ def decode_token(token):
         return data
 
 
-def send_email_verification(user):
+def send_email_verification(user: User) -> None:
     """Send an email to verify the user's email.
 
     Args:
@@ -94,13 +95,13 @@ def send_email_verification(user):
             [user.email],
             fail_silently=False,
         )
-    except SMTPException as e:  # noqa: F84
+    except SMTPException as e:  # noqa: F841
         logger.exception('Failed to send verifiction email for user id:{}'.format(user.id), extra={
             'user_id': user.id,
             'token_id': instance.id,
         })
         raise EmailVerificationTokenException("Failed to send verification email for user {}".format(user.id)) from e
-    except (IntegrityError, DatabaseError) as e:  # noqa: F84
+    except (IntegrityError, DatabaseError) as e:  # noqa: F841
         logger.error('Cannot create verification token for user id:{}'.format(user.id), exc_info=True)
         raise EmailVerificationTokenException('Cannot create verification token for user id:{}'.format(user.id))
 

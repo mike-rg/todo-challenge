@@ -10,9 +10,9 @@ class BaseEmailVerificationFactory(DjangoModelFactory):
         model = EmailVerificationToken
 
 
-class ExpiredEmailVerificationFactory(BaseEmailVerificationFactory):
+class ExpiredEmailVerificationTokenFactory(BaseEmailVerificationFactory):
     expired_at = timezone.now() - timezone.timedelta(days=1)
 
 
-class ValidEmailVerificationFactory(BaseEmailVerificationFactory):
+class ValidEmailVerificationTokenFactory(BaseEmailVerificationFactory):
     expired_at = timezone.now() + timezone.timedelta(days=1)
